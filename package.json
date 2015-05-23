@@ -1,35 +1,36 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "bilmuh",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "description": "EU Bilmuh Annoucement App",
   "keywords": [
-    "OpenShift",
+    "bilmuh",
     "Node.js",
     "application",
     "openshift"
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
+    "name": "y0emre",
+    "email": "y0emre@gmail.com",
+    "url": "http://bilmuh.ege.edu.tr"
   },
-  "homepage": "http://www.openshift.com/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/openshift/origin-server"
-  },
-
   "engines": {
     "node": ">= 0.6.0",
     "npm": ">= 1.0.0"
   },
-
   "dependencies": {
-    "express": "~3.4.4"
+    "async": "^0.9.0",
+    "body-parser": "^1.12.0",
+    "cheerio": "^0.17.0",
+    "express": "~3.4.x",
+    "iconv-lite": "^0.4.4",
+    "legacy-encoding": "^3.0.0",
+    "mongoose": "^4.0.3",
+    "node-gcm": "^0.9.12",
+    "request": "^2.40.0",
+    "turkish-char-encoding": "0.0.5"
   },
   "devDependencies": {},
   "bundleDependencies": [],
-
   "private": true,
-  "main": "server.js"
+  "main": "index.js"
 }

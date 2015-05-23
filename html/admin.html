@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Bilmuh Duyuru App</title>
+</head>
+
+<body>
+    <div id="contact">
+        <h2>Bilmuh Duyuru App</h2>
+
+
+        <form action="/all-users" method="get">
+            <fieldset>
+                <label for="name">Get All Users</label>
+                <input type="submit" value="Get All Users" />
+
+            </fieldset>
+        </form>
+
+        <br>
+        <form action="/send-message" method="post">
+            <fieldset>
+                <label for="name">Send message to: </label>
+                <input type="text" id="s_id" name="s_id" placeholder="REGID ?" />
+                <input type="text" id="s_message" name="s_message" placeholder="And the message is?" />
+                <input type="submit" value="Send The Message" />
+
+            </fieldset>
+        </form>
+
+        <br>
+        <form action="/duyurular" method="get">
+            <fieldset>
+                <input type="submit" value="All Annc.s" />
+            </fieldset>
+        </form>
+
+        <br>
+        <form action="/check-users" method="get">
+            <fieldset>
+                <label for="name">Delete unreachable users from database</label>
+                <input type="submit" value="Start" />
+
+            </fieldset>
+        </form>
+
+        <br>
+
+    </div>
+</body>
+
+</html>
+
+<!-- 
+
+<form action="/removeUser" method="post">
+            <fieldset>
+                <label for="name">Remove User: </label>
+                <input type="text" id="remove" name="r_id" placeholder="_id?" />
+                <input type="submit" value="Remove User" />
+
+            </fieldset>
+        </form>
+        <br>
+
+<form action="/sendall" method="post">
+            <fieldset>
+                <input type="text" id="remove" name="e_message" placeholder="Message?" />
+                <input type="text" id="s_id" name="e_url" placeholder="url?" />
+                <input type="submit" value="Send To All" />
+
+            </fieldset>
+        </form>
+        <br>
+
+<form action="/getNews" method="post">
+            <fieldset>
+                <input type="text" id="lasturl" name="lasturl" placeholder="last?" />
+                <input type="submit" value="get" />
+
+            </fieldset>
+        </form>
+
+-->
