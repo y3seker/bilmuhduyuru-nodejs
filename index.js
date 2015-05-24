@@ -5,6 +5,9 @@ var check = require('./routes/check');
 var checkn = require('./routes/check-n');
 var database = require('./routes/database');
 var bodyParser = require('body-parser');
+var request = require('request');
+
+var self_url = 'http://bilmuh-y3seker.rhcloud.com/';
 
 process.env.TZ = 'Europe/Istanbul';
 app.use(express.json());
@@ -46,5 +49,6 @@ database.open(function () {
 var minutes = 10,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
+    request(self_url, function () {});
     check.doRoutineCheck(function () {});
 }, the_interval);

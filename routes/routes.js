@@ -21,7 +21,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/dahayeni?n=:count([0-9]+)', function (req, res) {
+    app.get('/dahayeni/:count([0-9]+)', function (req, res) {
         check.checkForNew(function (cb) {
             anncs.getNews(req.params.count, function (cb) {
                 res.json(cb);
@@ -63,6 +63,10 @@ module.exports = function (app) {
                 res.send(result);
             });
 
+        });
+
+        app.get('*', function (req, res) {
+            res.send("404");
         });
     }
 
