@@ -33,7 +33,7 @@ module.exports = function (app) {
     });
 
 
-    app.post('/kayit', function (req, res) {
+    app.post('/kayit', index.urlencodedParser, function (req, res) {
         console.log(req.body.key);
         res.send("OK");
         /*

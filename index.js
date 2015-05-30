@@ -18,6 +18,9 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+module.exports.urlencodedParser = bodyParser.urlencoded({
+    extended: false
+});
 module.exports.env = app.get('env');
 routes(app);
 
