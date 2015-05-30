@@ -34,7 +34,6 @@ module.exports = function (app) {
 
 
     app.post('/kayit', function (req, res) {
-
         if (req.body.key === utils.registerKey) {
             users.add(req.body.reg_id, function (cb) {
                 res.json(cb);
