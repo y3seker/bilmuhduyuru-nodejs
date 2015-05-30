@@ -37,7 +37,7 @@ module.exports = function (app) {
 
         if (req.body.key === utils.registerKey) {
             users.add(req.body.reg_id, function (cb) {
-                res.send(cb);
+                res.json(cb);
             });
         } else {
             console.log('Register: Invalid register key ' + req.body.key);
@@ -45,7 +45,7 @@ module.exports = function (app) {
                 regID: "",
                 regCode: 0
             }
-            res.send(cb);
+            res.json(cb);
         }
     });
 
