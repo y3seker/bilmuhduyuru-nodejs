@@ -31,12 +31,17 @@ var self = module.exports = {
         };
 
         User.findOneAndUpdate(update, update, options, function (err, doc) {
+            var r = {
+                regID: reg_id,
+                regCode: 1
+            };
             if (err) {
-                update.regCode = 0;
-                callback(update);
+                console.error(err);
+                r.regCode = 0;
+                callback(r);
             } else {
-                update.regCode = 1;
-                callback(update);
+                r.regCode = 1;
+                callback(r);
             }
         });
     },
@@ -46,18 +51,9 @@ var self = module.exports = {
         User.findOneAndRemove({
             regID: reg_id
         }, function (err, product) {
-            if (err) {
-                callback({
-                    response: 'Invalid'
-                });
-                return console.error(err);
-            } else {
-                console.log('Removed: ' + product._id);
-                callback({
-                    response: 'Removed'
-                });
-            }
-
+            if (err) throw err;
+            console.log('User Deleted: ' + product._id);
+            callback();
         });
     },
 

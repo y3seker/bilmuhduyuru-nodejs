@@ -33,10 +33,10 @@ module.exports = function (app) {
     });
 
 
-    app.post('/register', function (req, res) {
+    app.post('/kayit', function (req, res) {
 
         if (req.body.key === utils.registerKey) {
-            users.addNewUser(req.body.user_id, req.body.reg_id, function (cb) {
+            users.add(req.body.reg_id, function (cb) {
                 res.send(cb);
             });
         } else {
@@ -58,8 +58,8 @@ module.exports = function (app) {
 
         app.get('/check-users', function (req, res) {
             gcm.sendDryMsgToAll(function (result, users) {
-                res.redirect('/all-users');
                 utils.deleteUnreachableUsers(result, users);
+                res.redirect('/all-users');
             });
         });
 
@@ -72,7 +72,7 @@ module.exports = function (app) {
         });
 
         app.post('/send-message', function (req, res) {
-            var message = gcm.createMessage(0, "", req.body.s_message);
+            var message = gcm.createMessage(gcm.types.TEST, "Test", req.body.s_message);
             gcm.sendMessage(req.body.s_id, message, function (result) {
                 res.send(result);
             });

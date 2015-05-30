@@ -12,7 +12,7 @@ var self_url = 'http://bilmuh-y3seker.rhcloud.com/';
 process.env.TZ = 'Europe/Istanbul';
 app.use(express.json());
 app.use(express.urlencoded());
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 var getIP = function (cb) {
     var ip = process.env.OPENSHIFT_NODEJS_IP;

@@ -23,7 +23,7 @@ var self = module.exports = {
             collapseKey: 'bilmuh ' + type,
             delayWhileIdle: true,
             data: {
-                type: type,
+                type: parseInt(type),
                 title: title,
                 message: message
             }
@@ -33,7 +33,7 @@ var self = module.exports = {
     sendMessage: function (regID, message, callback) {
 
         var regIds = [];
-        regIds.push(regId);
+        regIds.push(regID);
 
         sender.send(message, regIds, 4, function (err, result) {
             if (err) return console.error(err);
@@ -63,14 +63,21 @@ var self = module.exports = {
 
     sendDryMsgToAll: function (callback) {
 
-        var message = self.createMessage("dryrun", "test", "test");
+        var message = new gcm.Message({
+            collapseKey: 'bilmuh',
+            delayWhileIdle: true,
+            dryRun: true,
+            data: {
+                type: 0,
+                title: "",
+                message: ""
+            }
+        });
 
         users.getAllRegIds(function (regIDs) {
 
             sender.send(message, regIDs, 4, function (err, result) {
-                if (err) {
-                    return console.error(err);
-                }
+                if (err) throw err;
                 callback(result, regIDs);
             });
 

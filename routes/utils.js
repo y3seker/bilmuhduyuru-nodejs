@@ -1,3 +1,5 @@
+var user = require('./users');
+
 var spamList = [];
 
 
@@ -36,17 +38,12 @@ module.exports = {
 
     deleteUnreachableUsers: function (result, users) {
         for (var a in result.results) {
-            if (mess.results[a].error != undefined) {
-                users.removeUserByRegId(users[a], function (cb) {
+            if (result.results[a].error != undefined) {
+                user.removeByRegId(users[a], function (cb) {
 
                 });
             }
         }
     }
-
-
-
-
-
 
 };
