@@ -34,6 +34,9 @@ module.exports = function (app) {
 
 
     app.post('/kayit', function (req, res) {
+        console.log(req.body.key);
+        res.send("OK");
+        /*
         if (req.body.key === utils.registerKey) {
             users.add(req.body.reg_id, function (cb) {
                 res.json(cb);
@@ -46,6 +49,7 @@ module.exports = function (app) {
             }
             res.json(cb);
         }
+        */
     });
 
     // LOCALHOST FUNCTIONS
