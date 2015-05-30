@@ -14,7 +14,7 @@ var ip = (process.env.OPENSHIFT_NODEJS_IP === undefined ? '127.0.0.1' : process.
 
 process.env.TZ = 'Europe/Istanbul';
 app.use(bodyParser.json());
-app.use(express.urlencoded());
+app.use(bodyParser.urlencoded());
 
 module.exports.env = app.get('env');
 routes(app);
