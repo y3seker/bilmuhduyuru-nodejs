@@ -44,7 +44,7 @@ var self = module.exports = {
 
     sendMessageToAll: function (message, callback) {
 
-        if (index.ip === '127.0.0.1') {
+        if (index.env === 'development') {
             callback();
             return;
         }

@@ -67,7 +67,6 @@ var self = module.exports = {
     getAllRegIds: function (callback) {
         var regIDs = [];
         self.getAll(function (cb) {
-            console.log('Getting All Users, length: ' + cb.length);
             for (var i = 0; i < cb.length; i++) {
                 regIDs.push(cb[i].regID);
             }

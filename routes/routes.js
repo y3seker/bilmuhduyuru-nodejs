@@ -50,7 +50,7 @@ module.exports = function (app) {
     });
 
     // LOCALHOST FUNCTIONS
-    if (index.ip === '127.0.0.1') {
+    if (index.env === 'development') {
 
         app.get('/admin', function (req, res) {
             res.sendfile('./html/admin.html');

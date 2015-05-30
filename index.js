@@ -7,37 +7,30 @@ var database = require('./routes/database');
 var bodyParser = require('body-parser');
 var request = require('request');
 
-var self_url = 'http://bilmuh-y3seker.rhcloud.com/';
-
-process.env.TZ = 'Europe/Istanbul';
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(bodyParser.json());
-
-var getIP = function (cb) {
-    var ip = process.env.OPENSHIFT_NODEJS_IP;
-    if (ip === undefined) {
-        console.error("IP is undefined, setting localhost.");
-        ip = '127.0.0.1';
-    }
-    cb(ip);
-};
+var self_url = 'http://bilmuh-y3seker.rhcloud.com/duyurular';
 
 var port = (process.env.OPENSHIFT_NODEJS_PORT || 5000);
-var ip;
-getIP(function (_ip) {
-    ip = _ip;
-    module.exports.ip = _ip;
-    routes(app);
-});
+var ip = (process.env.OPENSHIFT_NODEJS_IP === undefined ? '127.0.0.1' : process.env.OPENSHIFT_NODEJS_IP);
 
-process.on('exit', function () {
-    database.close();
-});
+process.env.TZ = 'Europe/Istanbul';
+app.use(bodyParser.json());
+app.use(express.urlencoded());
+
+module.exports.env = app.get('env');
+routes(app);
 
 app.listen(port, ip, function () {
     console.log('%s \nNode server started on %s:%d ...',
         Date(Date.now()), ip, port);
+});
+
+app.use(function (err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).send('Bir şeyler ters gitti!');
+});
+
+process.on('exit', function () {
+    database.close();
 });
 
 database.open(function () {
@@ -47,6 +40,5 @@ database.open(function () {
 var minutes = 10,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
-    //request(self_url, function () {});
     checkn.check();
 }, the_interval);
