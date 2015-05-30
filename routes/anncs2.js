@@ -4,87 +4,75 @@ var anncSchema = mongoose.Schema({
     title: String,
     url: String,
     date: Date,
-    cont: String,
+    content: String,
     index: Number,
     created: Date
 });
 
-var Annc = mongoose.model('AnncNew', anncSchema);
+var Annc = mongoose.model('NewAnnc', anncSchema);
 
-module.exports = {
+var self = module.exports = {
 
-    addNewAnnc: function (title_, url_, date_, content_, index_, callback) {
-
-        var annc01 = new Annc({
+    create: function (title_, url_, date_, content_, index_) {
+        return new Annc({
             title: title_,
             url: url_,
             date: date_,
-            cont: content_,
+            content: content_,
             index: index_,
-            created: Date().now()
+            created: Date.now()
         });
+    },
 
-        annc01.save(function (err, product, numberAffected) {
+    add: function (annc, callback) {
+
+        annc.save(function (err, product, numberAffected) {
             if (err) {
                 callback(undefined);
                 return console.error(err);
             }
-
             callback(product);
         });
 
     },
 
-    getAllAnncs: function (callback) {
-        Annc.find({}).sort({
+    getAll: function (callback) {
+        Annc.find({}, '-_id -__v').sort({
             index: -1
         }).limit(500).exec(function (err, docs) {
-            if (err) {
-                callback(undefined);
-                return console.error(err);
-            }
+            if (err) throw err;
             callback(docs);
         });
     },
 
-    getSizeOfAnncs: function (count, callback) {
-        Annc.find({}).sort({
+    getSizeOf: function (count, callback) {
+        Annc.find({}, '-_id -__v').sort({
             index: -1
         }).limit(count).exec(function (err, docs) {
-            if (err) {
-                callback(undefined);
-                return console.error(err);
-            }
+            if (err) throw err;
             callback(docs);
         });
     },
 
     getLastAnnc: function (callback) {
-        Annc.findOne({}).sort({
+        Annc.findOne({}, '-_id -__v').sort({
             index: -1
         }).exec(function (err, doc) {
-            if (err) {
-                callback(undefined);
-                return console.error(err);
-            }
-
+            if (err) throw err;
             callback(doc);
         });
 
     },
-    getNews: function (lastindex, callback) {
+    getNewer: function (lastindex, callback) {
 
         Annc.find({
             index: {
                 $gt: lastindex
             }
-        }).sort({
+        }, '-_id -__v').sort({
             index: -1
         }).exec(function (err, docs) {
-            if (!err) {
-                callback(undefined);
-                return console.error(err);
-            }
+            if (err) throw err;
             callback(docs);
         });
 
@@ -94,16 +82,21 @@ module.exports = {
 
         Annc.find({
             index: i
-        }, function (err, doc) {
-            if (err) {
-                callback(undefined);
-                return console.error(err);
-
-            }
+        }, '-_id -__v', function (err, doc) {
+            if (err) throw err;
             callback(doc);
-
         });
 
+    },
+
+    updateByIndex: function (index, data, callback) {
+
+        Annc.findOneAndUpdate({
+            index: index
+        }, data, function (err, doc) {
+            if (err) throw err;
+            callback(doc);
+        });
     },
 
     updateAll: function () {

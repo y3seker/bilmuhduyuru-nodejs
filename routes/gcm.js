@@ -1,22 +1,37 @@
 var gcm = require('node-gcm');
 var users = require('./users');
+var index = require('../index');
 
-var myApiKey = 'AIzaSyDNxQH5e9jt1X6dqbJS0mN4RrIJwR-eIFg';
-var sender = new gcm.Sender(myApiKey);
+// for client var newSenderID = '598467768233';
+var new_api_key = 'AIzaSyAoqQfuGRhod_KlzuERxebTaeqkFSIqDE0';
+var api_key = 'AIzaSyDNxQH5e9jt1X6dqbJS0mN4RrIJwR-eIFg';
 
-module.exports = {
+var sender = new gcm.Sender(new_api_key);
 
-    sendMessage: function (regId, mess, callback) {
+var self = module.exports = {
 
-        var message = new gcm.Message({
-            collapseKey: 'message',
+    types: {
+        NEW: 0,
+        UPDATE: 1,
+        DELETE: 2,
+        RESET: 3,
+        TEST: 4
+    },
+
+    createMessage: function (type, title, message) {
+        return new gcm.Message({
+            collapseKey: 'bilmuh ' + type,
             delayWhileIdle: true,
-            timeToLive: 500,
             data: {
-                title: "bilmuh",
-                message: mess
+                type: type,
+                title: title,
+                message: message
             }
         });
+    },
+
+    sendMessage: function (regID, message, callback) {
+
         var regIds = [];
         regIds.push(regId);
 
@@ -27,22 +42,14 @@ module.exports = {
 
     },
 
-    sendMessageToAll: function (mess, callback) {
+    sendMessageToAll: function (message, callback) {
 
-        if (index.ip === '127.0.0.1')
+        if (index.ip === '127.0.0.1') {
             callback();
+            return;
+        }
 
-        var message = new gcm.Message({
-            collapseKey: 'bilmuh',
-            delayWhileIdle: true,
-            //timeToLive: 500,
-            data: {
-                title: 'Bilmuh Duyuru',
-                message: mess
-            }
-        });
-
-        users.getAllRegIDs(function (regIDs) {
+        users.getAllRegIds(function (regIDs) {
 
             sender.send(message, regIDs, 4, function (err, result) {
                 if (err) {
@@ -54,18 +61,11 @@ module.exports = {
         });
     },
 
-    sendDryMsgToAll: function (mess, callback) {
+    sendDryMsgToAll: function (callback) {
 
-        var message = new gcm.Message({
-            collapseKey: 'bilmuh',
-            delayWhileIdle: true,
-            dryRun: true,
-            data: {
-                title: 'Bilmuh Duyuru',
-                message: mess
-            }
-        });
-        users.getAllRegIDs(function (regIDs) {
+        var message = self.createMessage("dryrun", "test", "test");
+
+        users.getAllRegIds(function (regIDs) {
 
             sender.send(message, regIDs, 4, function (err, result) {
                 if (err) {
@@ -78,3 +78,16 @@ module.exports = {
     }
 
 };
+
+/*
+                var message = new gcm.Message({
+                    collapseKey: 'bilmuh',
+                    delayWhileIdle: true,
+                    //timeToLive: 500,
+                    data: {
+                        type: type,
+                        title: 'Bilmuh Duyuru',
+                        message: mess
+                    }
+                });
+*/

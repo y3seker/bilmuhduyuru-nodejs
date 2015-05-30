@@ -3,6 +3,8 @@ var spamList = [];
 
 module.exports = {
 
+    registerKey: 'g@bed7cHe=aTUza',
+
     isEmpty: function (obj) {
         return Object.keys(obj).length == 0;
     },
@@ -41,5 +43,10 @@ module.exports = {
             }
         }
     }
+
+
+
+
+
 
 };

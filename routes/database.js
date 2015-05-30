@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
-var db_url = 'mongodb://db-user0:00123654@ds035250.mongolab.com:35250/gcm-nodejs'
+var oldDB = 'mongodb://db-user0:00123654@ds035250.mongolab.com:35250/gcm-nodejs'
+var newDB = 'mongodb://bilmuh_user:00123654@ds041432.mongolab.com:41432/bilmuh'
 
-mongoose.connect(db_url);
+mongoose.connect(newDB);
 
-//var db = mongoose.connection;
+var c = mongoose.connection;
 
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
@@ -11,7 +12,7 @@ module.exports = {
 
     open: function (cb) {
 
-        mongoose.connection.once('open', function callback() {
+        c.once('open', function callback() {
             console.log("DB is opened.");
             cb();
         });
@@ -19,7 +20,7 @@ module.exports = {
 
     close: function (cb) {
 
-        mongoose.connection.once('close', function callback() {
+        c.once('close', function callback() {
             console.log("DB is closed.");
             cb();
         });

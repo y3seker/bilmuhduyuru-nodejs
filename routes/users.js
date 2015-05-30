@@ -1,150 +1,84 @@
 var mongoose = require('mongoose');
 
 var userSchema = mongoose.Schema({
-    username: String,
     regID: String
 });
 
 var User = mongoose.model('User', userSchema);
 
-var saveU = function (username, regID, callback) {
-    var user = new User({
-        username: username,
-        regID: regID
-    });
+var self = module.exports = {
 
-    user.save(function (err, product) {
-        if (!err)
+    save: function (regID, callback) {
+
+        var user = new User({
+            regID: regID
+        });
+
+        user.save(function (err, product) {
+            if (err) throw err;
             callback(200);
-        else {
-            callback(403);
-            return console.error(err);
-        }
-    });
-};
-
-var addNewUser = function (uname, reg_id, callback) {
-
-    var update = {
-        regID: reg_id
-    };
-    var query = {
-        username: uname
-    };
-    var options = {
-        upsert: true
-    };
-
-    User.findOneAndUpdate(query, update, options, function (err, doc) {
-        if (err) {
-            var cb = {
-                username: uname,
-                regID: "",
-                regCode: 0
-            }
-            callback(cb);
-        } else {
-            var cb = {
-                username: uname,
-                regID: reg_id,
-                regCode: 1
-            }
-            callback(cb);
-        }
-    });
-};
-
-var getUserById = function (u_id, callback) {
-
-    User.findById(u_id, function (err, user) {
-        if (err) {
-            callback({
-                response: user
-            });
-            return console.error(err);
-        }
-        callback({
-            response: user
         });
-    });
-};
+    },
 
-var removeUserByUsername = function (uname, callback) {
+    add: function (reg_id, callback) {
 
-    User.findOneAndRemove({
-        username: uname
-    }, function (err, product) {
-        if (err) {
-            callback({
-                response: 'Invalid'
-            });
-            return console.error(err);
-        } else {
-            console.log('Removed: ' + product._id);
-            callback({
-                response: 'Removed'
-            });
-        }
+        var update = {
+            regID: reg_id
+        };
 
-    });
-};
-var removeUserByRegId = function (regId, callback) {
+        var options = {
+            upsert: true
+        };
 
-    User.findOneAndRemove({
-        regID: regId
-    }, function (err, product) {
-        if (err) {
-            callback({
-                response: 'Invalid'
-            });
-            return console.error(err);
-        } else {
-            console.log('Removed: ' + product._id);
-            callback({
-                response: 'Removed'
-            });
-        }
-
-    });
-};
-var getAllUsers = function (callback) {
-    User.find({}, function (err, docks) {
-        if (err) {
-            callback({
-                response: 'An error occured.'
-            });
-            return console.error(err);
-        }
-        callback({
-            response: docks
+        User.findOneAndUpdate(update, update, options, function (err, doc) {
+            if (err) {
+                update.regCode = 0;
+                callback(update);
+            } else {
+                update.regCode = 1;
+                callback(update);
+            }
         });
-    });
-};
+    },
 
-var getAllRegIDs = function (callback) {
-    var regIDs = [];
-    getAllUsers(function (cb) {
+    removeByRegId: function (reg_id, callback) {
 
-        console.log('Getting All Users, length: ' + cb.response.length);
+        User.findOneAndRemove({
+            regID: reg_id
+        }, function (err, product) {
+            if (err) {
+                callback({
+                    response: 'Invalid'
+                });
+                return console.error(err);
+            } else {
+                console.log('Removed: ' + product._id);
+                callback({
+                    response: 'Removed'
+                });
+            }
 
-        for (var i = 0; i < cb.response.length; i++) {
-            regIDs.push(cb.response[i].regID);
-        }
-        if (i == cb.response.length)
-            callback(regIDs);
-    });
+        });
+    },
 
-};
+    getAll: function (callback) {
+        User.find({}, function (err, docs) {
+            if (err) throw err;
+            callback(docs);
+        });
+    },
 
+    getAllRegIds: function (callback) {
+        var regIDs = [];
+        self.getAll(function (cb) {
+            console.log('Getting All Users, length: ' + cb.length);
+            for (var i = 0; i < cb.length; i++) {
+                regIDs.push(cb[i].regID);
+            }
+            if (i == cb.length)
+                callback(regIDs);
+        });
 
-module.exports.getAllRegIDs = getAllRegIDs;
-module.exports.removeUserByUsername = removeUserByUsername;
-module.exports.removeUserByRegId = removeUserByRegId;
-module.exports.getAllUsers = getAllUsers;
-module.exports.getUserById = getUserById;
-module.exports.addNewUser = addNewUser;
-module.exports.saveU = saveU;
+    }
 
-var isEmpty = function (obj) {
-    return Object.keys(obj).length == 0;
 };

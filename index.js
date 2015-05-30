@@ -21,7 +21,7 @@ var getIP = function (cb) {
         ip = '127.0.0.1';
     }
     cb(ip);
-}
+};
 
 var port = (process.env.OPENSHIFT_NODEJS_PORT || 5000);
 var ip;
@@ -31,9 +31,7 @@ getIP(function (_ip) {
     routes(app);
 });
 
-
 process.on('exit', function () {
-    console.log('kapanıyor..');
     database.close();
 });
 
@@ -43,12 +41,12 @@ app.listen(port, ip, function () {
 });
 
 database.open(function () {
-    check.doRoutineCheck(function () {});
+    checkn.check();
 });
 
 var minutes = 10,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
-    request(self_url, function () {});
-    check.doRoutineCheck(function () {});
+    //request(self_url, function () {});
+    checkn.check();
 }, the_interval);
