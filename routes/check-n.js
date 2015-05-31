@@ -47,7 +47,7 @@ var self = module.exports = {
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
-            var list20 = $('td[width=365]').slice(0, 252);
+            var list20 = $('td[width=365]').slice(0, 20);
 
             var findFunc = function (obj, done) {
                 var url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
@@ -108,6 +108,7 @@ var self = module.exports = {
                 ignoreAttrs: true
             }, function (err, result) {
                 var data = result.rss.channel.item;
+                data.icerik = data.icerik.replace(/href=\"\/d/gi, "href=\"http://egeduyuru.ege.edu.tr/d");
                 var annc = anncs.create(data.description, data.link, data.tarih, data.icerik, index);
                 callback(annc);
             });
@@ -119,7 +120,6 @@ var self = module.exports = {
     },
 
     findBilmuhList: function (callback) {
-        //finalList.clear();
         var finalList = [];
         var options = {
             url: bilmuhURL,
