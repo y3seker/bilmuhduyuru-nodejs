@@ -14,10 +14,7 @@ var ip = (process.env.OPENSHIFT_NODEJS_IP === undefined ? '127.0.0.1' : process.
 
 process.env.TZ = 'Europe/Istanbul';
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    type: 'application/x-www-form-urlencoded',
-    extended: true
-}));
+app.use(express.bodyParser());
 
 module.exports.urlencodedParser = bodyParser.urlencoded({
     extended: false
