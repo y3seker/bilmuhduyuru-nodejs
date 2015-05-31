@@ -63,7 +63,7 @@ var self = module.exports = {
                     } else {
                         self.getContent(rssURL, index, function (data) {
                             if (result[0].title != data.title || result[0].content != data.content) {
-                                console.log(index + " updated");
+                                // console.log(index + " updated");
                                 updated.push(data);
                                 data._id = undefined;
                                 data.__v = undefined;
