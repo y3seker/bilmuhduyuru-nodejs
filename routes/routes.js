@@ -34,11 +34,12 @@ module.exports = function (app) {
 
 
     app.post('/kayit', function (req, res) {
-
+        users.add(req.body.reg_id, function (cb) {
+            res.json(cb);
+        });
+        /*
         if (req.body.key === utils.registerKey) {
-            users.add(req.body.reg_id, function (cb) {
-                res.json(cb);
-            });
+
         } else {
             console.log('Register: Invalid register key ' + req.body.key);
             var cb = {
@@ -47,7 +48,7 @@ module.exports = function (app) {
             }
             res.json(cb);
         }
-
+        */
     });
 
     // LOCALHOST FUNCTIONS
@@ -83,7 +84,7 @@ module.exports = function (app) {
     };
 
     app.get('*', function (req, res) {
-        res.send("404", 404);
+        res.status(404).send("404");
     });
 
 
