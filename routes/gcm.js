@@ -82,6 +82,25 @@ var self = module.exports = {
             });
 
         });
+    },
+
+    isRegIdValid: function (reg_id, callback) {
+
+        var message = new gcm.Message({
+            collapseKey: 'bilmuh',
+            delayWhileIdle: true,
+            dryRun: true,
+            data: {
+                type: 0,
+                title: "",
+                message: ""
+            }
+        });
+
+        sender.send(message, reg_id, 2, function (err, result) {
+            if (err) throw err;
+            callback(result.success == 1);
+        });
     }
 
 };

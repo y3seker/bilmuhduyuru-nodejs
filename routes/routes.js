@@ -32,30 +32,26 @@ module.exports = function (app) {
         });
     });
 
-
     app.post('/kayit', function (req, res) {
-        users.add(req.body.reg_id, function (cb) {
-            res.json(cb);
+        gcm.isRegIdValid(req.body.reg_id, function (valid) {
+            if (valid)
+                users.add(req.body.reg_id, function (cb) {
+                    res.json(cb);
+                });
+            else
+                res.json({
+                    regID: "",
+                    regCode: 0
+                });
         });
-        /*
-        if (req.body.key === utils.registerKey) {
 
-        } else {
-            console.log('Register: Invalid register key ' + req.body.key);
-            var cb = {
-                regID: "",
-                regCode: 0
-            }
-            res.json(cb);
-        }
-        */
     });
 
     // LOCALHOST FUNCTIONS
     if (index.env === 'development') {
 
         app.get('/admin', function (req, res) {
-            res.sendfile('./html/admin.html');
+            res.sendFile(__dirname + '/admin.html');
         });
 
         app.get('/check-users', function (req, res) {
