@@ -14,7 +14,7 @@
         "url": "http://bilmuh.ege.edu.tr"
     },
     "engines": {
-        "node": ">= 0.6.0",
+        "node": "0.12.4",
         "npm": ">= 1.0.0"
     },
     "dependencies": {
