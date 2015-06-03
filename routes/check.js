@@ -1,62 +1,37 @@
 var request = require('request')
 var cheerio = require('cheerio');
-var gcm = require('./gcm');
 var tr = require('turkish-char-encoding');
-var anncs = require('./anncs');
-var anncsDB = require('./anncs2');
 var async = require('async');
-var entities = require('cheerio/node_modules/entities');
+var parser = require('xml2js');
+var sanitizeHtml = require('sanitize-html');
 
-var last_index = '';
+var anncs = require('./anncs');
+var gcm = require('./gcm');
+var Utils = require('./utils');
+
+var bilmuhList = [];
 
 var bilmuhURL = 'http://bilmuh.ege.edu.tr';
 var egeDuyuruURL = 'http://egeduyuru.ege.edu.tr/index.php?bolumid=2';
 var egeDuyuruAbsURL = 'http://egeduyuru.ege.edu.tr/';
 
-var foundList = [];
-var list21 = [];
 
 var self = module.exports = {
 
-    doRoutineCheck: function (callback) {
-
-        self.getUpToDateAnnc(function () {
-
-            if (foundList.length > 0) {
-
-                self.writeToDB(function (cb) {
-                    if (cb.length > 0) {
-
-                        console.log(cb.length + ' New annc. found. Writing n Sending..');
-
-                        gcm.sendMessageToAll({
-                            duyuru: 'Yeni'
-                        }, function (response) {
-                            if (response != null && response.success > 0) {
-                                console.log(response);
-                                console.log('Message sent to ' + response.success + ' people.');
-                            } else {
-                                console.log(response);
-                                console.log('Message can not sent');
-                            }
-                        });
-
-                    }
-
-                });
-
-            } else {
-                callback(0);
-                console.log('No new annc. Keep tracking...');
-            }
-
+    check: function () {
+        self.doCheck(function (news, updated) {
+            if (news.length != 0)
+                gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
+            if (updated.length != 0)
+                gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
+                    updated), function () {});
         });
-
     },
 
-    getUpToDateAnnc: function (callback) {
+    doCheck: function (callback) {
 
-        foundList = [];
+        var updated = [];
+        var news = [];
 
         var options = {
             url: egeDuyuruURL,
@@ -67,254 +42,126 @@ var self = module.exports = {
             }
         };
 
-        function callback123(err, resp, body) {
+        function requestCallback(err, resp, body) {
 
-            if (!err && resp.statusCode == 200) {
+            if (err || resp.statusCode != 200)
+                throw ('Can not connect to BILMUH. ' + err);
 
-                var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
-                var $ = cheerio.load(bodyUTF8);
-                var list20 = $('td[width=365]').slice(0, 20);
+            //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
+            var $ = cheerio.load(body);
+            var list20 = $('td[width=365]').slice(0, 250);
 
-                var findFunc = function (obj, done) {
-                    var cont_url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
-                    var title_ = $(obj).text().replace(/\n/gi, '');
-                    var date_ = $(obj).next().text().replace(/\n /gi, '');
-                    var index_ = parseInt(cont_url.slice(31, 36), 10);
-
-                    anncs.findByIndex(index_, function (found) {
-                        if (found != undefined && found.length == 0) {
-                            var meta_data = {
-                                title: title_,
-                                url: cont_url,
-                                date: date_,
-                                cont: 'null',
-                                index: index_
-                            };
-                            console.log(index_ + " is new, added foundList.");
-                            foundList.push(meta_data);
+            var findFunc = function (obj, done) {
+                var url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
+                var index = parseInt(url.slice(31, 36), 10);
+                var rssURL = [url.slice(0, 30), 'i', url.slice(30)].join('');
+                anncs.findByIndex(index, function (result) {
+                    if (result != undefined && result.length == 0) {
+                        self.getContent(rssURL, index, function (data) {
+                            news.push(data);
+                            self.writeToDB(data, index);
                             done();
-                        } else {
-                            if (title_.toLowerCase().indexOf("güncellen") > -1) {
-                                console.log(index_ + " This might be updated.");
-                            }
-                            done();
-                        }
-                    });
-                };
-                var cbFunc = function (err) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    callback();
-                };
-
-                async.forEach(list20, findFunc, cbFunc);
-
-            } else {
-                console.log('Can not connect to EGE. ' + err);
-            }
-
-        }
-        request(options, callback123);
-
-    },
-
-    checkForNew: function (callback) {
-
-        getUpToDateAnnc(function () {
-
-            if (foundList.length > 0) {
-
-                writeToDB(function (cb) {
-
-                    if (cb.length > 0) {
-                        callback(1);
-
-                        gcm.sendMessageToAll({
-                            duyuru: 'Yeni'
-                        }, function (response) {
-                            if (response != null && response.success > 0) {
-                                console.log(response);
-                                console.log('Message sent to ' + response.success + ' people.');
+                        });
+                    } else {
+                        self.getContent(rssURL, index, function (data) {
+                            if (result[0].title != data.title || result[0].content != data.content) {
+                                updated.push(data);
+                                data._id = undefined;
+                                data.__v = undefined;
+                                anncs.updateByIndex(index, data, function () {
+                                    done();
+                                });
                             } else {
-                                console.log(response);
-                                console.log('Message can not sent');
+                                done();
                             }
                         });
-
                     }
-
-                });
-            } else {
-                callback(0);
-            }
-
-        });
-
-    },
-
-    getFromStrach: function () {
-        var allDuyurus = [];
-        var options = {
-            url: egeDuyuruURL,
-            encoding: null,
-            headers: {
-                'User-Agent': 'Mozilla/5.0',
-                'Content-Type': 'text/html, charset=iso-8859-9'
-            }
-        };
-
-        function callback2(err, resp, body) {
-
-            var counter = 0;
-            if (!err && resp.statusCode == 200) {
-
-                var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
-
-                var $ = cheerio.load(bodyUTF8);
-
-                $('td[width=365]').each(function (i, element) {
-
-                    var cont_url = egeDuyuruAbsURL + $(this).children().children().children().attr('href');
-                    var title_ = $(this).text();
-                    var date_ = $(this).next().text().replace(/\r\n/gi, '');
-                    var index_ = parseInt(cont_url.slice(50, cont_url.length), 10);
-
-                    if (counter <= 1000) {
-                        counter++;
-                        var meta_data = {
-                            title: title_,
-                            url: cont_url,
-                            date: date_,
-                            cont: 'null',
-                            index: index_
-                        };
-
-                        foundList.push(meta_data);
-                    }
-
                 });
 
-                //callback({response: allDuyurus})
-                writeToDB(function (cb) {
-                    console.log("Writing done.");
-                });
-            } else {
-                console.log('Can not connect to EGE. ' + err);
             }
+
+            var cbFunc = function (err) {
+                if (err) throw err;
+                callback(news, updated);
+                var date = new Date(Date.now());
+                console.log("U: " + updated.length + " N: " + news.length + " at " + date.toLocaleString('tr-TR'));
+            };
+
+            async.forEach(list20, findFunc, cbFunc);
         }
-        request(options, callback2);
-
+        request(options, requestCallback);
     },
 
-    // Yeni duyurulari veritabanina yazar
-
-    writeToDB: function (callback) {
-        var cb_list = [];
-        var saveFunc = function (obj, done) {
-            cb_list.push(obj);
-            self.getContentOfAnnc(obj.url, function (cb) {
-                obj.cont = cb;
-                anncs.addNewAnnc(obj.title, obj.url, obj.date, cb, obj.index, function (cb) {
-                    done();
-                });
-
+    getContent: function (rssURL, index, callback) {
+        request({
+            url: rssURL,
+            xmlMode: true,
+            encoding: null,
+            headers: {
+                'User-Agent': 'request',
+                'Content-Type': 'charset=iso-8859-9'
+            }
+        }, function (err, resp, body) {
+            if (err || resp.statusCode != 200) throw err;
+            var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
+            parser.parseString(bodyUTF8, {
+                explicitArray: false,
+                ignoreAttrs: true
+            }, function (err, result) {
+                var data = result.rss.channel.item;
+                data.description = sanitizeHtml(data.description);
+                data.icerik = data.icerik.replace(/href='\/d/gi, "href='http://egeduyuru.ege.edu.tr/d");
+                data.icerik = data.icerik.replace(/href=\"\/d/gi, "href=\"http://egeduyuru.ege.edu.tr/d");
+                var annc = anncs.create(data.description, data.link, data.tarih, data.icerik, index);
+                callback(annc);
             });
-        };
-
-        var doneIteration = function (err) {
-            if (err) return console.error(err);
-            callback(cb_list);
-            console.log(cb_list.length + ' New annc.(s) has been written');
-        };
-        async.forEach(foundList, saveFunc, doneIteration);
-
-    },
-
-    writeToDBNew: function (list, callback) {
-        var insideList = list;
-
-        var saveFunc = function (obj, done) {
-            getContentOfAnnc(obj.url, function (cb) {
-                obj.cont = cb;
-                obj.date = new Date(parseDate(obj.date));
-                anncsDB.addNewAnnc(obj.title, obj.url, obj.date, cb, obj.index, function (cb) {
-                    done();
-                });
-
-            });
-        };
-
-        var doneIteration = function (err) {
-            if (err) return console.error(err);
-            callback(insideList);
-            console.log(cb_list.length + ' New annc.(s) has been written');
-        };
-        async.forEach(insideList, saveFunc, doneIteration);
-
-    },
-
-    parseDate: function (text) {
-        text = text.replace('/ /gi', '');
-        console.log(text);
-        return text;
-    },
-
-    getLastAnnc: function () {
-        anncs.getLastAnnc(function (cb) {
-            if (cb != -1) {
-                last_index = cb.index;
-                console.log(last_index + ' Last annc. set. Starting routine...');
-
-                doRoutineCheck(function (cb) {});
-            } else
-                return false;
         });
     },
 
-    // Duyuru icerigini alir, html formunda callback yapar
+    writeToDB: function (annc, index) {
+        anncs.add(annc, function (cb) {});
+    },
 
-    getContentOfAnnc: function (url_, callback) {
-        var content;
-
+    findBilmuhList: function (callback) {
+        var finalList = [];
         var options = {
-            url: url_,
+            url: bilmuhURL,
             encoding: null,
             headers: {
-                'User-Agent': 'Mozilla/5.0',
-                'Content-Type': 'text/html, charset=iso-8859-9'
+                'User-Agent': 'request',
+                'Content-Type': 'charset=iso-8859-9'
             }
         };
 
-        function callback_(err, resp, body) {
+        function requestCallback(err, resp, body) {
 
-            if (!err && resp.statusCode == 200) {
-                // don't do escaping of the attribute values and text nodes
-                // and so far it's the only place where it's used
-                entities.escape = function (str) {
-                    return str;
-                }
-                entities.encodeXML = function (str) {
-                    return str;
-                }
+            if (err || resp.statusCode != 200)
+                throw ('Can not connect to BILMUH. ' + err);
 
-                var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
+            var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
+            var $ = cheerio.load(bodyUTF8);
+            var list = $('a[class=gunlukliste]');
 
-                var $ = cheerio.load(bodyUTF8);
+            // async foreach
 
-                content = $('font[color=#000000]').html();
-                content = content.replace(/href=\"\//gi, "href=\"http://egeduyuru.ege.edu.tr/");
-                //console.log(content);
-            } else {
-                callback('Bu içerik veritabanına eklenmemiş, tarayıcıda açmayı deneyin.');
-                return console.error('Baglanti hatasi ' + err);
-            }
+            var findFunc = function (obj, done) {
+                var url = $(obj).attr('href');
+                var index_ = parseInt(url.slice(30, 35), 10);
+                finalList.push(index_);
+                done();
+            };
 
-            callback(content);
+            var cbFunc = function (err) {
+                if (err) throw err;
 
-        };
-        request(options, callback_);
+                if (callback)
+                    callback(finalList);
+            };
 
-    },
+            async.forEach(list, findFunc, cbFunc);
+
+        }
+        request(options, requestCallback);
+    }
+
 };

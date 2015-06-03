@@ -1,11 +1,11 @@
 var express = require('express');
 var app = express();
-var routes = require('./routes/routes.js');
-var check = require('./routes/check');
-var checkn = require('./routes/check-n');
-var database = require('./routes/database');
 var bodyParser = require('body-parser');
 var request = require('request');
+
+var routes = require('./routes/routes');
+var check = require('./routes/check');
+var database = require('./routes/database');
 
 var self_url = 'http://bilmuh-y3seker.rhcloud.com/duyurular';
 
@@ -41,11 +41,11 @@ process.on('exit', function () {
 });
 
 database.open(function () {
-    checkn.check();
+    check.check();
 });
 
 var minutes = 10,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
-    checkn.check();
+    check.check();
 }, the_interval);

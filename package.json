@@ -1,40 +1,38 @@
 {
-  "name": "bilmuh",
-  "version": "1.0.0",
-  "description": "EU Bilmuh Annoucement App",
-  "keywords": [
+    "name": "bilmuh",
+    "version": "1.0.0",
+    "description": "EU Bilmuh Annoucement App",
+    "keywords": [
     "bilmuh",
     "Node.js",
     "application",
     "openshift"
   ],
-  "author": {
-    "name": "y0emre",
-    "email": "y0emre@gmail.com",
-    "url": "http://bilmuh.ege.edu.tr"
-  },
-  "engines": {
-    "node": "0.12.4",
-    "npm": ">= 1.0.0"
-  },
-  "dependencies": {
-    "async": "~1.1.0",
-    "body-parser": "1.12.4",
-    "cheerio": "~0.19.0",
-    "escape-html": "~1.0.1",
-    "express": "4.12.4",
-    "html-escape": "^1.0.1",
-    "iconv-lite": "0.4.8",
-    "legacy-encoding": "~3.0.0",
-    "mongoose": "~4.0.4",
-    "node-gcm": "~0.9.15",
-    "request": "~2.57.0",
-    "sanitize-html": "^1.7.0",
-    "turkish-char-encoding": "0.0.5",
-    "xml2js": "~0.4.9"
-  },
-  "devDependencies": {},
-  "bundleDependencies": [],
-  "private": true,
-  "main": "index.js"
+    "author": {
+        "name": "y0emre",
+        "email": "y0emre@gmail.com",
+        "url": "http://bilmuh.ege.edu.tr"
+    },
+    "engines": {
+        "node": "0.12.4",
+        "npm": ">= 1.0.0"
+    },
+    "dependencies": {
+        "async": "~1.1.0",
+        "body-parser": "1.12.4",
+        "cheerio": "~0.19.0",
+        "express": "4.12.4",
+        "iconv-lite": "0.4.8",
+        "legacy-encoding": "~3.0.0",
+        "mongoose": "~4.0.4",
+        "node-gcm": "~0.9.15",
+        "request": "~2.57.0",
+        "sanitize-html": "^1.7.0",
+        "turkish-char-encoding": "0.0.5",
+        "xml2js": "~0.4.9"
+    },
+    "devDependencies": {},
+    "bundleDependencies": [],
+    "private": true,
+    "main": "index.js"
 }

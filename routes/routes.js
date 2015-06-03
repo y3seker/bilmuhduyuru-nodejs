@@ -1,8 +1,8 @@
 var index = require('../index');
 var gcm = require('./gcm');
 var users = require('./users');
-var anncs = require('./anncs2');
-var check = require('./check-n');
+var anncs = require('./anncs');
+var check = require('./check');
 var utils = require('./utils');
 
 module.exports = function (app) {
@@ -11,7 +11,6 @@ module.exports = function (app) {
         anncs.getAll(function (cb) {
             res.json(cb);
         });
-
     });
 
     app.get('/duyurular/:count([0-9]+)', function (req, res) {
