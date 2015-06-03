@@ -30,6 +30,10 @@ module.exports = {
 
     },
 
+    escapeHTML: function (html) {
+        return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
+
     minutesToMillis: function (minutes) {
         return minutes * 60 * 1000;
     },

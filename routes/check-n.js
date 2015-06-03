@@ -4,7 +4,8 @@ var tr = require('turkish-char-encoding');
 var async = require('async');
 var anncs = require('./anncs2');
 var gcm = require('./gcm');
-var escape = require('escape-html');
+var Utils = require('./utils');
+var escapeHtml = require('html-escape');
 var parser = require('xml2js');
 
 var bilmuhList = [];
@@ -47,7 +48,7 @@ var self = module.exports = {
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
-            var list20 = $('td[width=365]').slice(0, 20);
+            var list20 = $('td[width=365]').slice(0, 250);
 
             var findFunc = function (obj, done) {
                 var url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
@@ -63,7 +64,6 @@ var self = module.exports = {
                     } else {
                         self.getContent(rssURL, index, function (data) {
                             if (result[0].title != data.title || result[0].content != data.content) {
-                                // console.log(index + " updated");
                                 updated.push(data);
                                 data._id = undefined;
                                 data.__v = undefined;
@@ -108,6 +108,7 @@ var self = module.exports = {
                 ignoreAttrs: true
             }, function (err, result) {
                 var data = result.rss.channel.item;
+                data.icerik = data.icerik.replace(/href='\/d/gi, "href='http://egeduyuru.ege.edu.tr/d");
                 data.icerik = data.icerik.replace(/href=\"\/d/gi, "href=\"http://egeduyuru.ege.edu.tr/d");
                 var annc = anncs.create(data.description, data.link, data.tarih, data.icerik, index);
                 callback(annc);

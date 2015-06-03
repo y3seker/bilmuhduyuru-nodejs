@@ -17,7 +17,7 @@ var self = module.exports = {
         return new Annc({
             title: title_,
             url: url_,
-            date: date_,
+            date: new Date(date_),
             content: content_,
             index: index_,
             created: Date.now()
