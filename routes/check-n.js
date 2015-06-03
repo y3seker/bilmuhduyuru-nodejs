@@ -5,8 +5,8 @@ var async = require('async');
 var anncs = require('./anncs2');
 var gcm = require('./gcm');
 var Utils = require('./utils');
-var escapeHtml = require('html-escape');
 var parser = require('xml2js');
+var sanitizeHtml = require('sanitize-html');
 
 var bilmuhList = [];
 
@@ -48,7 +48,7 @@ var self = module.exports = {
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
-            var list20 = $('td[width=365]').slice(0, 20);
+            var list20 = $('td[width=365]').slice(0, 250);
 
             var findFunc = function (obj, done) {
                 var url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
@@ -108,6 +108,7 @@ var self = module.exports = {
                 ignoreAttrs: true
             }, function (err, result) {
                 var data = result.rss.channel.item;
+                data.description = sanitizeHtml(data.description);
                 data.icerik = data.icerik.replace(/href='\/d/gi, "href='http://egeduyuru.ege.edu.tr/d");
                 data.icerik = data.icerik.replace(/href=\"\/d/gi, "href=\"http://egeduyuru.ege.edu.tr/d");
                 var annc = anncs.create(data.description, data.link, data.tarih, data.icerik, index);

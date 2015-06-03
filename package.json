@@ -29,6 +29,7 @@
     "mongoose": "~4.0.4",
     "node-gcm": "~0.9.15",
     "request": "~2.57.0",
+    "sanitize-html": "^1.7.0",
     "turkish-char-encoding": "0.0.5",
     "xml2js": "~0.4.9"
   },
