@@ -25,12 +25,6 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/kontrolet', function (req, res) {
-        check.checkForNew(function (cb) {
-            res.send(cb);
-        });
-    });
-
     app.post('/kayit', function (req, res) {
         gcm.isRegIdValid(req.body.reg_id, function (valid) {
             if (valid)
@@ -69,11 +63,16 @@ module.exports = function (app) {
         });
 
         app.post('/send-message', function (req, res) {
-            var message = gcm.createMessage(gcm.types.TEST, "Test", req.body.s_message);
+            var message = gcm.createMessage(gcm.types.DELETE, "Test", req.body.s_message);
             gcm.sendMessage(req.body.s_id, message, function (result) {
                 res.send(result);
             });
 
+        });
+
+        app.get('/kontrolet', function (req, res) {
+            check.check();
+            res.redirect('/duyurular');
         });
 
     };

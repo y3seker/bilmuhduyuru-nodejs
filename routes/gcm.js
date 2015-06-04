@@ -23,7 +23,7 @@ var self = module.exports = {
             collapseKey: 'bilmuh ' + type,
             delayWhileIdle: true,
             data: {
-                type: type,
+                type: parseInt(type),
                 title: title,
                 message: message
             }
