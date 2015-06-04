@@ -49,7 +49,7 @@ var self = module.exports = {
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
-            var list20 = $('td[width=365]').slice(0, 250);
+            var list20 = $('td[width=365]').slice(0, 20);
 
             var findFunc = function (obj, done) {
                 var url = egeDuyuruAbsURL + $(obj).children().children().children().attr('href');
