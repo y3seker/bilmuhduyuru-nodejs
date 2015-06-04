@@ -45,7 +45,7 @@ var self = module.exports = {
         function requestCallback(err, resp, body) {
 
             if (err || resp.statusCode != 200)
-                throw ('Can not connect to BILMUH. ' + err);
+                throw ('Can not connect to EGEDUYURU. ' + err);
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
@@ -102,7 +102,7 @@ var self = module.exports = {
                 'Content-Type': 'charset=iso-8859-9'
             }
         }, function (err, resp, body) {
-            if (err || resp.statusCode != 200) throw err;
+            if (err || resp.statusCode != 200) throw ('Can not connect to EGEDUYURU RSS. ' + err);;
             var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             parser.parseString(bodyUTF8, {
                 explicitArray: false,
