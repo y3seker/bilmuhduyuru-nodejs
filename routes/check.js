@@ -119,7 +119,8 @@ var self = module.exports = {
     },
 
     writeToDB: function (annc, index) {
-        anncs.add(annc, function (cb) {});
+        if (index.env != 'development')
+            anncs.add(annc, function (cb) {});
     },
 
     findBilmuhList: function (callback) {

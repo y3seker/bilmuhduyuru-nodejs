@@ -10,7 +10,6 @@
     <div id="contact">
         <h2>Bilmuh Duyuru App</h2>
 
-
         <form action="/all-users" method="get">
             <fieldset>
                 <label for="name">Get All Users</label>
@@ -23,11 +22,12 @@
         <form action="/send-message" method="post">
             <fieldset>
                 <label for="name">Send message to: </label>
-                <input type="text" id="s_id" name="s_id" placeholder="REGID ?" />
+                <br> NEW: 0, UPDATE: 1, DELETE: 2, RESET: 3, TEST: 4
+                <br>
+                <input type="text" id="s_id" name="s_id" placeholder="regid ?" />
                 <input type="text" id="s_type" name="s_type" placeholder="type ?" />
-                <input type="text" id="s_message" name="s_message" placeholder="And the message is?" />
+                <input type="text" id="s_message" name="s_message" placeholder="message ?" />
                 <input type="submit" value="Send The Message" />
-
             </fieldset>
         </form>
 
