@@ -63,7 +63,7 @@ module.exports = function (app) {
         });
 
         app.post('/send-message', function (req, res) {
-            var message = gcm.createMessage(req.body.s_type, "Test", req.body.s_message);
+            var message = gcm.createMessage(gcm.types.TEST, "Test", req.body.s_message);
             gcm.sendMessage(req.body.s_id, message, function (result) {
                 res.send(result);
             });

@@ -11,11 +11,11 @@ var sender = new gcm.Sender(new_api_key);
 var self = module.exports = {
 
     types: {
-        NEW: 0,
-        UPDATE: 1,
-        DELETE: 2,
-        RESET: 3,
-        TEST: 4
+        NEW: '0',
+        UPDATE: '1',
+        DELETE: '2',
+        RESET: '3',
+        TEST: '4'
     },
 
     createMessage: function (type, title, message) {
@@ -23,7 +23,7 @@ var self = module.exports = {
             collapseKey: 'bilmuh ' + type,
             delayWhileIdle: true,
             data: {
-                type: parseInt(type),
+                type: type,
                 title: title,
                 message: message
             }
@@ -104,16 +104,3 @@ var self = module.exports = {
     }
 
 };
-
-/*
-                var message = new gcm.Message({
-                    collapseKey: 'bilmuh',
-                    delayWhileIdle: true,
-                    //timeToLive: 500,
-                    data: {
-                        type: type,
-                        title: 'Bilmuh Duyuru',
-                        message: mess
-                    }
-                });
-*/
