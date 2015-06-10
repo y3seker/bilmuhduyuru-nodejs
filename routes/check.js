@@ -102,7 +102,7 @@ var self = module.exports = {
                 'Content-Type': 'charset=iso-8859-9'
             }
         }, function (err, resp, body) {
-            if (err || resp.statusCode != 200) throw (index + 'Can not connect to EGEDUYURU RSS. ' + err);;
+            if (err || resp.statusCode != 200) throw (index + ' Can not connect to EGEDUYURU RSS. ' + err);
             var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             parser.parseString(bodyUTF8, {
                 explicitArray: false,
@@ -119,8 +119,9 @@ var self = module.exports = {
     },
 
     writeToDB: function (annc, index) {
-        if (index.env != 'development')
+        if (index.env != 'development') {
             anncs.add(annc, function (cb) {});
+        }
     },
 
     findBilmuhList: function (callback) {
