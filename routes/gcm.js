@@ -24,6 +24,7 @@ var self = module.exports = {
             delayWhileIdle: true,
             data: {
                 type: type,
+                type2: type,
                 title: title,
                 message: message
             }
