@@ -45,7 +45,7 @@ database.open(function () {
     check.check();
 });
 
-var minutes = 6,
+var minutes = 7,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
     check.check();
