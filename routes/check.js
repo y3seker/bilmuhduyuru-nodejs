@@ -8,8 +8,7 @@ var sanitizeHtml = require('sanitize-html');
 var anncs = require('./anncs');
 var gcm = require('./gcm');
 var Utils = require('./utils');
-
-var bilmuhList = [];
+var twitter = require('./twit');
 
 var bilmuhURL = 'http://bilmuh.ege.edu.tr';
 var egeDuyuruURL = 'http://egeduyuru.ege.edu.tr/index.php?bolumid=2';
@@ -20,8 +19,11 @@ var self = module.exports = {
 
     check: function () {
         self.doCheck(function (news, updated) {
-            if (news.length != 0)
+            if (news.length != 0) {
                 gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
+                twitter.twitTheList(news);
+            }
+
             if (updated.length != 0)
                 gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
                     updated), function () {});
@@ -44,8 +46,10 @@ var self = module.exports = {
 
         function requestCallback(err, resp, body) {
 
-            if (err || resp.statusCode != 200)
-                throw ('Can not connect to EGEDUYURU. ' + err);
+            if (err || resp.statusCode != 200) {
+                console.error('Can not connect to EGEDUYURU. ' + err);
+                return;
+            }
 
             //var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             var $ = cheerio.load(body);
@@ -102,7 +106,10 @@ var self = module.exports = {
                 'Content-Type': 'charset=iso-8859-9'
             }
         }, function (err, resp, body) {
-            if (err || resp.statusCode != 200) throw (index + ' Can not connect to EGEDUYURU RSS. ' + err);
+            if (err || resp.statusCode != 200) {
+                console.error(index + ' Can not connect to EGEDUYURU RSS. ' + err);
+                return;
+            }
             var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
             parser.parseString(bodyUTF8, {
                 explicitArray: false,
@@ -122,48 +129,6 @@ var self = module.exports = {
         if (index.env != 'development') {
             anncs.add(annc, function (cb) {});
         }
-    },
-
-    findBilmuhList: function (callback) {
-        var finalList = [];
-        var options = {
-            url: bilmuhURL,
-            encoding: null,
-            headers: {
-                'User-Agent': 'request',
-                'Content-Type': 'charset=iso-8859-9'
-            }
-        };
-
-        function requestCallback(err, resp, body) {
-
-            if (err || resp.statusCode != 200)
-                throw ('Can not connect to BILMUH. ' + err);
-
-            var bodyUTF8 = tr('iso-8859-9').toUTF8(body);
-            var $ = cheerio.load(bodyUTF8);
-            var list = $('a[class=gunlukliste]');
-
-            // async foreach
-
-            var findFunc = function (obj, done) {
-                var url = $(obj).attr('href');
-                var index_ = parseInt(url.slice(30, 35), 10);
-                finalList.push(index_);
-                done();
-            };
-
-            var cbFunc = function (err) {
-                if (err) throw err;
-
-                if (callback)
-                    callback(finalList);
-            };
-
-            async.forEach(list, findFunc, cbFunc);
-
-        }
-        request(options, requestCallback);
     }
 
 };

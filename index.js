@@ -1,3 +1,4 @@
+require('dotenv').load();
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -33,7 +34,7 @@ app.listen(port, ip, function () {
 
 app.use(function (err, req, res, next) {
     console.error(err.stack);
-    res.status(500).send('Bir şeyler ters gitti!');
+    res.status(500).send('Something went wrong!');
 });
 
 process.on('exit', function () {
@@ -44,7 +45,7 @@ database.open(function () {
     check.check();
 });
 
-var minutes = 10,
+var minutes = 6,
     the_interval = minutes * 60 * 1000;
 setInterval(function () {
     check.check();

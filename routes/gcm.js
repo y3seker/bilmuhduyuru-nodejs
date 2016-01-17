@@ -2,11 +2,7 @@ var gcm = require('node-gcm');
 var users = require('./users');
 var index = require('../index');
 
-// for client var newSenderID = '598467768233';
-var new_api_key = 'AIzaSyAoqQfuGRhod_KlzuERxebTaeqkFSIqDE0';
-var api_key = 'AIzaSyDNxQH5e9jt1X6dqbJS0mN4RrIJwR-eIFg';
-
-var sender = new gcm.Sender(new_api_key);
+var sender = new gcm.Sender(process.env.GCM_API_KEY);
 
 var self = module.exports = {
 

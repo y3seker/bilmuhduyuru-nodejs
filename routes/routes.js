@@ -4,6 +4,7 @@ var users = require('./users');
 var anncs = require('./anncs');
 var check = require('./check');
 var utils = require('./utils');
+var twitter = require('./twitter');
 
 module.exports = function (app) {
 
@@ -81,6 +82,20 @@ module.exports = function (app) {
         app.get('/kontrolet', function (req, res) {
             check.check();
             res.redirect('/duyurular');
+        });
+
+        app.get('/twitOne', function (req, res) {
+            anncs.getSizeOf(1, function (cb) {
+                twitter.twitTheList(cb);
+            });
+            res.send('Tweeted!');
+        });
+
+        app.get('/twitTwo', function (req, res) {
+            anncs.getSizeOf(2, function (cb) {
+                twitter.twitTheList(cb);
+            });
+            res.send('Tweeted 2!');
         });
 
     };
