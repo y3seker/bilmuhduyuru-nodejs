@@ -8,7 +8,7 @@ var sanitizeHtml = require('sanitize-html');
 var anncs = require('./anncs');
 var gcm = require('./gcm');
 var Utils = require('./utils');
-var twitter = require('./twit');
+var twitter = require('./twitter');
 
 var bilmuhURL = 'http://bilmuh.ege.edu.tr';
 var egeDuyuruURL = 'http://egeduyuru.ege.edu.tr/index.php?bolumid=2';
