@@ -21,7 +21,7 @@ var self = module.exports = {
         self.doCheck(function (news, updated) {
             if (news.length != 0) {
                 gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
-                twitter.twitTheList(news);
+                twitter.twitTheList(news.reverse());
             }
 
             if (updated.length != 0)

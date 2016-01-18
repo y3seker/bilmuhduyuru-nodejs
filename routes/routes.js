@@ -91,9 +91,9 @@ module.exports = function (app) {
             res.send('Tweeted!');
         });
 
-        app.get('/twitTwo', function (req, res) {
-            anncs.getSizeOf(2, function (cb) {
-                twitter.twitTheList(cb);
+        app.post('/twitCount', function (req, res) {
+            anncs.getSizeOf(req.body.tweet_count, function (cb) {
+                twitter.twitTheList(cb.reverse());
             });
             res.send('Tweeted 2!');
         });

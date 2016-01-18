@@ -1,4 +1,5 @@
 require('dotenv').load();
+var CronJob = require('cron').CronJob;
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -7,8 +8,6 @@ var request = require('request');
 var routes = require('./routes/routes');
 var check = require('./routes/check');
 var database = require('./routes/database');
-
-var self_url = 'http://bilmuh-y3seker.rhcloud.com/duyurular';
 
 var port = (process.env.OPENSHIFT_NODEJS_PORT || 5000);
 var ip = (process.env.OPENSHIFT_NODEJS_IP === undefined ? '127.0.0.1' : process.env.OPENSHIFT_NODEJS_IP);
@@ -41,12 +40,10 @@ process.on('exit', function () {
     database.close();
 });
 
-database.open(function () {
+var job = new CronJob('0 */10 7-17 * * 1-5', function () {
     check.check();
-});
+}, null, false, process.env.TZ);
 
-var minutes = 7,
-    the_interval = minutes * 60 * 1000;
-setInterval(function () {
-    check.check();
-}, the_interval);
+database.open(function () {
+    job.start();
+});
