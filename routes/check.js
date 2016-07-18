@@ -5,31 +5,127 @@ var async = require('async');
 var parser = require('xml2js');
 var sanitizeHtml = require('sanitize-html');
 
+var app = require('../index');
 var anncs = require('./anncs');
 var gcm = require('./gcm');
-var Utils = require('./utils');
-var twitter = require('./twitter');
 
 var bilmuhURL = 'http://bilmuh.ege.edu.tr';
+
+// unused
 var egeDuyuruURL = 'http://egeduyuru.ege.edu.tr/index.php?bolumid=2';
 var egeDuyuruAbsURL = 'http://egeduyuru.ege.edu.tr/';
+var twitter = require('./twitter');
 
+// last annc index before the website update, there is no index for annc anymore
+// new index calculation -> index = lastAnncIndex + articleID
+var lastAnncIndex = 12820;
 
 var self = module.exports = {
 
-    check: function () {
-        self.doCheck(function (news, updated) {
-            if (news.length != 0) {
-                gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
-                twitter.twitTheList(news.reverse());
+    checkBilmuh: function () {
+        var updated = [];
+        var news = [];
+        request({
+            url: 'http://bilmuh.ege.edu.tr/duyurular?page=0',
+            encoding: null,
+            headers: {
+                'User-Agent': 'request',
+                'Content-Type': 'charset=iso-8859-9'
+            }
+        }, function (err, resp, body) {
+            if (err || resp.statusCode != 200) {
+                console.error('Can not connect to BILMUH.EGE.EDU.TR ' + err);
+                return;
             }
 
-            if (updated.length != 0)
-                gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
-                    updated), function () {});
+            var $ = cheerio.load(body, {
+                normalizeWhitespace: true
+            });
+
+            var anncList = $('div[id=main-content]').find($('div[class=view-content]')).children(),
+                count = anncList.length;
+            anncList.each(function (i, elem) {
+                var _annc = $(this).children().first();
+                var index = parseInt(_annc.attr("id").replace("article-", "").trim()) + lastAnncIndex;
+                var title = _annc.children().first().text().trim();
+                var url = bilmuhURL + _annc.children().first().children().children().attr("href");
+                anncs.findByIndex(index, function (result) {
+                    if (result != undefined && result.length == 0) {
+                        self.getBilmuhContent(url, index, title, function (data) {
+                            news.push(data);
+                            self.writeToDB(data, index);
+                            //console.log("NEW ** ", [data]);
+                        });
+                    } else {
+                        self.getBilmuhContent(url, index, title, function (data) {
+                            if (result[0].title != data.title || result[0].content != data.content) {
+                                updated.push(data);
+                                data._id = undefined;
+                                data.__v = undefined;
+                                //console.log("UPDATE ** ", [data]);
+                                anncs.updateByIndex(index, data, function () {});
+                            }
+                        });
+                    }
+                    if (!--count) self.finishCheck(news, updated);
+                });
+            });
+
+
         });
     },
 
+    finishCheck: function (news, updated) {
+        var date = new Date(Date.now());
+        console.log("U: %d N: %d at %s", updated.length, news.length, date.toLocaleString('tr-TR'));
+
+        if (news.length != 0) {
+            gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
+        }
+
+        if (updated.length != 0)
+            gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
+                updated), function () {});
+    },
+
+    getBilmuhContent: function (url, index, title, callback) {
+        request({
+            url: url,
+            encoding: null,
+            headers: {
+                'User-Agent': 'request',
+                'Content-Type': 'charset=utf-8'
+            }
+        }, function (err, resp, body) {
+            if (err || resp.statusCode != 200) {
+                console.error(index + ' Can not connect to BILMUH.EGE.EDU.TR ' + err);
+                return;
+            }
+
+            var $ = cheerio.load(body, {
+                normalizeWhitespace: true
+            });
+            var selector = "div[id=\"article-" + (index - lastAnncIndex) + "\"]";
+            var article = $(selector).children().first();
+            var dateDiv = article.children().first();
+            var contentDiv = article.children().first().next();
+            var date = dateDiv.text().slice(0, 10).split("/");
+            var dateString = date[2] + "-" + date[1] + "-" + date[0];
+            var content = contentDiv.children().children().children();
+            var annc = anncs.create(title, url, dateString, content, index);
+            callback(annc);
+        });
+    },
+
+    writeToDB: function (annc) {
+        if (app.env != 'development') {
+            anncs.add(annc, function (cb) {});
+        }
+    },
+
+    /**
+     *   This one for egeduyuru.edu.tr and deprecated
+     */
     doCheck: function (callback) {
 
         var updated = [];
@@ -95,7 +191,9 @@ var self = module.exports = {
         }
         request(options, requestCallback);
     },
-
+    /**
+     *   This one for egeduyuru.edu.tr and deprecated
+     */
     getContent: function (rssURL, index, callback) {
         request({
             url: rssURL,
@@ -123,12 +221,6 @@ var self = module.exports = {
                 callback(annc);
             });
         });
-    },
-
-    writeToDB: function (annc, index) {
-        if (index.env != 'development') {
-            anncs.add(annc, function (cb) {});
-        }
     }
 
 };

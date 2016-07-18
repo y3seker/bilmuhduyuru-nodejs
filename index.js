@@ -41,9 +41,11 @@ process.on('exit', function () {
 });
 
 var job = new CronJob('0 */10 7-17 * * 1-5', function () {
-    check.check();
+    check.checkBilmuh();
 }, null, false, process.env.TZ);
 
 database.open(function () {
+    check.checkBilmuh();
     job.start();
+    console.log("ENV = " + module.exports.env);
 });
