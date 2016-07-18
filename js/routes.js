@@ -1,4 +1,4 @@
-var _app = require('../app');
+var _app = require('./app');
 var gcm = require('./gcm');
 var users = require('./users');
 var anncs = require('./anncs');
@@ -45,7 +45,7 @@ module.exports = function (app) {
     if (_app.env === 'development') {
 
         app.get('/admin', function (req, res) {
-            res.sendFile(__dirname + '/admin.html');
+            res.sendFile(__dirname.replace("js", "html") + '/admin.html');
         });
 
         app.get('/check-users', function (req, res) {

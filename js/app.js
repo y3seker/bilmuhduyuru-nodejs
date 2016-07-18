@@ -5,9 +5,9 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request');
 
-var routes = require('./routes/routes');
-var check = require('./routes/check');
-var database = require('./routes/database');
+var routes = require('./routes');
+var check = require('./check');
+var database = require('./database');
 
 var port = (process.env.OPENSHIFT_NODEJS_PORT || 5000);
 var ip = (process.env.OPENSHIFT_NODEJS_IP === undefined ? '127.0.0.1' : process.env.OPENSHIFT_NODEJS_IP);
