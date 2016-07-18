@@ -1,3 +1,3 @@
-The OpenShift `nodejs` cartridge documentation can be found at:
+A simple node.js app to parse bilmuh.ege.edu.tr, provides an API for announcements.
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
+[BilmuhDuyuru](https://github.com/y3seker/bilmuhduyuru) uses this as feed.
