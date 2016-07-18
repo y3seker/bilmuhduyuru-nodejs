@@ -1,4 +1,4 @@
-var index = require('../index');
+var _app = require('../app');
 var gcm = require('./gcm');
 var users = require('./users');
 var anncs = require('./anncs');
@@ -42,7 +42,7 @@ module.exports = function (app) {
     });
 
     // LOCALHOST FUNCTIONS
-    if (index.env === 'development') {
+    if (_app.env === 'development') {
 
         app.get('/admin', function (req, res) {
             res.sendFile(__dirname + '/admin.html');

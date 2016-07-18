@@ -5,7 +5,7 @@ var async = require('async');
 var parser = require('xml2js');
 var sanitizeHtml = require('sanitize-html');
 
-var app = require('../index');
+var app = require('../app');
 var anncs = require('./anncs');
 var gcm = require('./gcm');
 

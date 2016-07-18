@@ -1,6 +1,6 @@
 var gcm = require('node-gcm');
 var users = require('./users');
-var index = require('../index');
+var index = require('../app');
 
 var sender = new gcm.Sender(process.env.GCM_API_KEY);
 

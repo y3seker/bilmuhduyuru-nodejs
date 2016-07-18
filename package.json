@@ -9,9 +9,9 @@
     "openshift"
   ],
     "author": {
-        "name": "y0emre",
-        "email": "y0emre@gmail.com",
-        "url": "http://bilmuh.ege.edu.tr"
+        "name": "y3seker",
+        "email": "y3seker@gmail.com",
+        "url": "https://github.com/y3seker"
     },
     "engines": {
         "node": "0.10",
@@ -37,5 +37,5 @@
     "devDependencies": {},
     "bundleDependencies": [],
     "private": true,
-    "main": "index.js"
+    "main": "app.js"
 }
