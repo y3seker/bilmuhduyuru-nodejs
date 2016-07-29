@@ -1,6 +1,6 @@
 var gcm = require('node-gcm');
 var users = require('./users');
-var index = require('./app');
+var app = require('./app');
 
 var sender = new gcm.Sender(process.env.GCM_API_KEY);
 
@@ -41,7 +41,7 @@ var self = module.exports = {
 
     sendMessageToAll: function (message, callback) {
 
-        if (index.env === 'development') {
+        if (app.env === 'development') {
             callback();
             return;
         }
