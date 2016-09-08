@@ -42,8 +42,8 @@ var self = module.exports = {
                 normalizeWhitespace: true
             });
 
-            var anncList = $('div[id=main-content]').find($('div[class=view-content]')).children(),
-                count = anncList.length;
+            var anncList = $('div[id=main-content]').find($('div[class=view-content]')).children();
+            var count = anncList.length;
             anncList.each(function (i, elem) {
                 var _annc = $(this).children().first();
                 var index = parseInt(_annc.attr("id").replace("article-", "").trim()) + lastAnncIndex;
@@ -54,7 +54,7 @@ var self = module.exports = {
                         self.getBilmuhContent(url, index, title, function (data) {
                             news.push(data);
                             self.writeToDB(data, index);
-                            //console.log("NEW ** ", [data]);
+                            if (!--count) self.finishCheck(news, updated);
                         });
                     } else {
                         self.getBilmuhContent(url, index, title, function (data) {
@@ -62,16 +62,13 @@ var self = module.exports = {
                                 updated.push(data);
                                 data._id = undefined;
                                 data.__v = undefined;
-                                //console.log("UPDATE ** ", [data]);
                                 anncs.updateByIndex(index, data, function () {});
                             }
+                            if (!--count) self.finishCheck(news, updated);
                         });
                     }
-                    if (!--count) self.finishCheck(news, updated);
                 });
             });
-
-
         });
     },
 
