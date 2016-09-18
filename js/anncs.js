@@ -63,11 +63,27 @@ var self = module.exports = {
         });
 
     },
+
     getNewer: function (lastindex, callback) {
 
         Annc.find({
             index: {
                 $gt: lastindex
+            }
+        }, '-_id -__v').sort({
+            index: -1
+        }).exec(function (err, docs) {
+            if (err) throw err;
+            callback(docs);
+        });
+
+    },
+
+    getNewerByDate: function (date, callback) {
+
+        Annc.find({
+            date: {
+                $gte: date
             }
         }, '-_id -__v').sort({
             index: -1

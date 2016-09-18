@@ -20,8 +20,21 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/duyuru/:index([0-9]+)', function (req, res) {
+        anncs.findByIndex(req.params.index, function (cb) {
+            res.json(cb);
+        });
+    });
+    
     app.get('/dahayeni/:index([0-9]+)', function (req, res) {
         anncs.getNewer(req.params.index, function (cb) {
+            res.json(cb);
+        });
+    });
+    
+    app.get('/dahayeni/:date([0-9-]+)', function (req, res) {
+        var date = new Date(req.params.date);
+        anncs.getNewerByDate(date, function (cb) {
             res.json(cb);
         });
     });
