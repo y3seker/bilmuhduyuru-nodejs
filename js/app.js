@@ -23,6 +23,8 @@ module.exports.urlencodedParser = bodyParser.urlencoded({
     extended: false
 });
 
+app.use(express.static('doc'));
+
 module.exports.env = app.get('env');
 routes(app);
 
