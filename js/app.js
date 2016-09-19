@@ -42,7 +42,7 @@ process.on('exit', function () {
     database.close();
 });
 
-var job = new CronJob('0 */10 7-17 * * 1-5', function () {
+var job = new CronJob('0 */10 6-19 * * 1-5', function () {
     check.checkBilmuh();
 }, null, false, process.env.TZ);
 
