@@ -1,4 +1,4 @@
-var request = require('request')
+var request = require('request');
 var cheerio = require('cheerio');
 var tr = require('turkish-char-encoding');
 var async = require('async');
@@ -33,7 +33,7 @@ var self = module.exports = {
                 'Content-Type': 'charset=iso-8859-9'
             }
         }, function (err, resp, body) {
-            if (err || resp.statusCode != 200) {
+            if (err || resp.statusCode !== 200) {
                 console.error('Can not connect to BILMUH.EGE.EDU.TR ' + err);
                 return;
             }
@@ -50,7 +50,7 @@ var self = module.exports = {
                 var title = _annc.children().first().text().trim();
                 var url = bilmuhURL + _annc.children().first().children().children().attr("href");
                 anncs.findByIndex(index, function (result) {
-                    if (result != undefined && result.length == 0) {
+                    if (result !== undefined && result.length === 0) {
                         self.getBilmuhContent(url, index, title, function (data) {
                             news.push(data);
                             self.writeToDB(data, index);
@@ -58,7 +58,7 @@ var self = module.exports = {
                         });
                     } else {
                         self.getBilmuhContent(url, index, title, function (data) {
-                            if (result[0].title != data.title || result[0].content != data.content) {
+                            if (result[0].title !== data.title || result[0].content !== data.content) {
                                 updated.push(data);
                                 data._id = undefined;
                                 data.__v = undefined;
@@ -76,13 +76,13 @@ var self = module.exports = {
         var date = new Date(Date.now());
         console.log("U: %d N: %d at %s", updated.length, news.length, date.toLocaleString('tr-TR'));
 
-        if (news.length != 0) {
+        if (news.length !== 0) {
             gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
         }
 
-        if (updated.length != 0)
-            gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
-                updated), function () {});
+        //if (updated.length != 0)
+        //    gcm.sendMessageToAll(gcm.createMessage(gcm.types.UPDATE, updated.length + " Duyuru Güncellendi",
+        //        updated), function () {});
     },
 
     getBilmuhContent: function (url, index, title, callback) {
@@ -94,7 +94,7 @@ var self = module.exports = {
                 'Content-Type': 'charset=utf-8'
             }
         }, function (err, resp, body) {
-            if (err || resp.statusCode != 200) {
+            if (err || resp.statusCode !== 200) {
                 console.error(index + ' Can not connect to BILMUH.EGE.EDU.TR ' + err);
                 return;
             }
@@ -115,7 +115,7 @@ var self = module.exports = {
     },
 
     writeToDB: function (annc) {
-        if (app.env != 'development') {
+        if (app.env !== 'development') {
             anncs.add(annc, function (cb) {});
         }
     },
