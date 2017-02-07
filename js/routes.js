@@ -7,11 +7,11 @@ var utils = require('./utils');
 var twitter = require('./twitter');
 
 module.exports = function (app) {
-    
+
     app.get('/', function (req, res) {
         res.sendFile(__dirname.replace("js", "doc") + '/index.html');
     });
-    
+
     /**
      * @api {get} /duyurular All announcements
      * @apiName duyurular
@@ -175,16 +175,16 @@ module.exports = function (app) {
 
         app.get('/twitOne', function (req, res) {
             anncs.getSizeOf(1, function (cb) {
-                twitter.twitTheList(cb);
+                twitter.tweetTheList(cb);
             });
             res.send('Tweeted!');
         });
 
         app.post('/twitCount', function (req, res) {
             anncs.getSizeOf(req.body.tweet_count, function (cb) {
-                twitter.twitTheList(cb.reverse());
+                twitter.tweetTheList(cb.reverse());
             });
-            res.send('Tweeted 2!');
+            res.send('Tweeted ' + req.body.tweet_count);
         });
 
     };

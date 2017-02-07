@@ -78,6 +78,7 @@ var self = module.exports = {
 
         if (news.length !== 0) {
             gcm.sendMessageToAll(gcm.createMessage(gcm.types.NEW, "", ""), function () {});
+            twitter.tweetTheList(news); 
         }
 
         //if (updated.length != 0)

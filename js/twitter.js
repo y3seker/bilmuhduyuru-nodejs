@@ -9,12 +9,11 @@ var client = new Twitter({
 
 var self = module.exports = {
 
-    twit: function (message) {
+    tweet: function (message) {
         client.post('statuses/update', {
             status: message
         }, function (error, tweet, response) {
             if (error) {
-                console.error("TWITTER ERROR! ");
                 console.error(error);
                 return;
             }
@@ -22,9 +21,9 @@ var self = module.exports = {
         });
     },
 
-    twitTheList: function (newAnncs) {
+    tweetTheList: function (newAnncs) {
         newAnncs.forEach(function (annc) {
-            self.twit(self.generateMessage(annc));
+            self.tweet(self.generateMessage(annc));
         });
     },
 
